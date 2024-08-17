@@ -15,7 +15,10 @@ Add the package to your `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  ytdl: ^1.0.0
+  ytdl:
+    git:
+      url: https://github.com/SwirX/ytdl.git
+      ref: main
 ```
 
 ## Usage
@@ -83,9 +86,6 @@ void main() async {
 `downloadVideo(String id, String path)`: Downloads the video to the specified path.
 `downloadAudio(String id, String path)`: Downloads the audio to the specified path.
 
-### Classes
-
-#### 
 
 ## Roadmap
 

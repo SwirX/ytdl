@@ -1,6 +1,6 @@
 name: ytdl
 description: "Youtube Video and Audio Downloader."
-version: 0.0.1
+version: 0.1.0
 homepage:
 
 environment:
