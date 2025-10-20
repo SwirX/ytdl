@@ -16,8 +16,9 @@ class YoutubeDownloader {
   YoutubeResults? lastResult;
 
   Future<String> _getVideoKey(String id) async {
-    final url =
-        Uri.parse("https://www.youtube.com/watch?v=$id&bpctr=9999999999&hl=en");
+    final url = Uri.parse(
+      "https://www.youtube.com/watch?v=$id&bpctr=9999999999&hl=en",
+    );
 
     final headers = {
       "cookie": "CONSENT=YES+cb",
@@ -40,9 +41,9 @@ class YoutubeDownloader {
         throw Exception("Request failed with status: ${response.statusCode}");
       }
 
-      final apiKey = RegExp(r'"INNERTUBE_API_KEY":"(.+?)"')
-          .firstMatch(utf8.decode(response.bodyBytes))!
-          .group(1)!;
+      final apiKey = RegExp(
+        r'"INNERTUBE_API_KEY":"(.+?)"',
+      ).firstMatch(utf8.decode(response.bodyBytes))!.group(1)!;
 
       return apiKey;
     } catch (e) {
@@ -52,33 +53,35 @@ class YoutubeDownloader {
 
   Future<YoutubeResults> _fetchResults(String key, String id) async {
     final url = Uri.parse(
-        "https://www.youtube.com/youtubei/v1/player?prettyPrint=false&key=$key");
+      "https://www.youtube.com/youtubei/v1/player?prettyPrint=false&key=$key",
+    );
     final body = jsonEncode({
       "context": {
         "client": {
-          "clientName": "ANDROID_TESTSUITE",
-          "clientVersion": "1.9",
+          "clientName": "ANDROID",
+          "clientVersion": "18.31.35",
           "androidSdkVersion": 30,
           "hl": "en",
           "gl": "US",
-          "utcOffsetMinutes": 0
-        }
+        },
       },
-      "videoId": id
+      "videoId": id,
     });
 
     try {
-      final response = await http.post(url, body: body, headers: {
-        "Content-Type": "application/json",
-        "User-Agent": agent,
-      });
+      final response = await http.post(
+        url,
+        body: body,
+        headers: {"Content-Type": "application/json", "User-Agent": agent},
+      );
 
       if (response.statusCode != 200) {
         throw Exception("Request failed with status: ${response.statusCode}");
       }
 
       return YoutubeResults.fromJson(
-          jsonDecode(utf8.decode(response.bodyBytes)));
+        jsonDecode(utf8.decode(response.bodyBytes)),
+      );
     } catch (e) {
       throw Exception("Failed to get video formats: $e");
     }
@@ -113,8 +116,11 @@ class YoutubeDownloader {
     }
   }
 
-  Future<String> downloadAudio(String id, String path,
-      {bool fromVideo = false}) async {
+  Future<String> downloadAudio(
+    String id,
+    String path, {
+    bool fromVideo = false,
+  }) async {
     try {
       if (lastResult == null) {
         final key = await _getVideoKey(id);
@@ -139,7 +145,7 @@ class YoutubeDownloader {
       final url = selectedFormat.url;
       final extension =
           RegExp(r'\/(\w+?);').firstMatch(selectedFormat.mimeType)?.group(1) ??
-              'mp4';
+          'mp4';
 
       var response = await http.get(Uri.parse(url));
 
@@ -187,7 +193,7 @@ class YoutubeDownloader {
       final url = selectedFormat.url;
       final extension =
           RegExp(r'\/(\w+?);').firstMatch(selectedFormat.mimeType)?.group(1) ??
-              'mp4';
+          'mp4';
 
       var response = await http.get(Uri.parse(url));
 
@@ -208,11 +214,7 @@ class YoutubeDownloader {
   }
 
   _mergeMedia(String vid, String aux, String out) async {
-    await VideoEditor.mergeAudioWithVideo(
-      vid,
-      aux,
-      out,
-    );
+    await VideoEditor.mergeAudioWithVideo(vid, aux, out);
     await File(vid).delete();
     await File(aux).delete();
   }
